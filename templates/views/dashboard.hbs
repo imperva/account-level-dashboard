@@ -1347,7 +1347,7 @@
             success: function (data) {
                 console.log("JSON of Account Subscription");
                 console.log(data);
-                document.getElementById("accountName2").textContent = data.planStatus.accountId + "   " + data.planStatus.accountName + " ";
+                document.getElementById("account_name").textContent =  data.planStatus.accountName + " ";
                 document.getElementById("plan_name").textContent = "Ent " +  data.planStatus.additionalServices.planSectionRows[0].purchased;
                 document.getElementById("account_id").textContent = data.planStatus.accountId;
              //   document.getElementById("trial_end").textContent = data.account.trial_end_date;

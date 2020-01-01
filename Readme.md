@@ -15,7 +15,7 @@ The Account level dashboard includes:
 1- Install NodeJS v12 from https://nodejs.org/en/download  
 2- Download the project files of this Github directory in a local directory of your choice  
 3- from the project directory, run the command: 'npm install'  
-4- run the following command: 'node --http-parser=legacy src/app.js '  
+4- run the following command: 'node src/app.js '  
     If you have any issues, try the following: 'node --http-parser=legacy src/app.js '  
 5- browse to localhost:3000  
 

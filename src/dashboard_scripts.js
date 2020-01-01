@@ -12,7 +12,14 @@ const sites_list = ({ api_id, api_key, account_id, period } = {}, callback) => {
         api_id: api_id,
         api_key: api_key,
         account_id: account_id
-        //       'page_size': 100
+    }
+
+    const post_data_sites = {
+        api_id: api_id,
+        api_key: api_key,
+        account_id: account_id,
+        page_size: 100,
+        page_num: 0
     }
 
     const post_stats = {
@@ -33,7 +40,7 @@ const sites_list = ({ api_id, api_key, account_id, period } = {}, callback) => {
         axios.post('https://my.imperva.com/api/prov/v1/accounts/listSubAccounts', querystring.stringify(post_data)),
         axios.post('https://my.imperva.com/api/stats/v1', querystring.stringify(post_stats)),
         axios.post('https://my.imperva.com/api/prov/v1/accounts/subscription', querystring.stringify(post_data)),
-        axios.post('https://my.imperva.com/api/prov/v1/sites/list', querystring.stringify(post_data))
+        axios.post('https://my.imperva.com/api/prov/v1/sites/list', querystring.stringify(post_data_sites))
     ])
 
         .then(axios.spread((r_subaccounts, r_stats, r_sub, r_sites) => {
@@ -53,19 +60,39 @@ const sites_list = ({ api_id, api_key, account_id, period } = {}, callback) => {
             console.log("POST LIST SITES")
             if (r_sites.data.res_message != "OK") {
                 callback({ res_message: "NOK", title: "Error", message: "Make sure you are using Admin Keys\n Test on API explorer: /api/prov/v1/sites/list\n error code: " + r_sites.data.res_message })
-                //ADD ERROR IN CASE OF API AUTH ERROR
-                //                    text: ("Make sure you are using Admin Keys\n Test on API explorer: /api/prov/v1/sites/list\n error code: " + data.res_message),
 
             } else {
-                console.log(r_sites.data)
-                var sites_array = r_sites.data.sites
-                console.log("export ARRAY")
-                console.log(sites_array)
-                console.log(sites_array.length)
-                callback({ res_message: "OK" })
-                fs.writeFileSync('public/export_sites.json', JSON.stringify(sites_array))
+                let sites_array = r_sites.data.sites
 
+                if (r_sites.data.sites.length == 100) {    // perhaps take out this check
+                    // callback({ res_message: "NOK", title: "Error", message: "I found 5 sites" + r_sites.data.res_message })
+                    function loop_site_list() {
+                        post_data_sites.page_num += 1
+                        console.log(post_data_sites)
+                        axios.post('https://my.imperva.com/api/prov/v1/sites/list', querystring.stringify(post_data_sites))
+                            .then(function (r_sites_loop) {
+                                console.log("SITES IN LOOP")
+                                console.log(r_sites_loop.data.sites.length);
+                                sites_array = sites_array.concat(r_sites_loop.data.sites)
+                                if (r_sites_loop.data.sites.length == 100) {
+                                    loop_site_list()
+                                } else {
+                                    fs.writeFileSync('public/export_sites.json', JSON.stringify(sites_array))
+                                    callback({ res_message: "OK" })
+                                }
+                            })
+                            .catch(error => {
+                                console.log(error)
+                            })
+                    }
+                    loop_site_list()
+                } else {
+                    fs.writeFileSync('public/export_sites.json', JSON.stringify(sites_array))
+                    callback({ res_message: "OK" })
+
+                }
             }
+
         }))
         .catch((err) => {
             console.log('FAIL', err)
@@ -85,80 +112,3 @@ module.exports = {
 
 
 
-
-/*
-    // FUNCTION TO FETCH MORE PAGES IF MORE THAN 100 SITES
-    function requestExtra(pageNb) {
-        console.log("SOMEONE IS REQUESTING EXTRA")
-        const post_extra = {
-            method: 'POST',
-            url: 'https://my.imperva.com/api/prov/v1/sites/list',
-            formData: {
-                api_id: api_id,
-                api_key: api_key,
-                account_id: account_id,
-                'page_size': 100,
-                'page_num': pageNb
-            },
-            headers: {
-                'cache-control': 'no-cache'
-            }
-        }
-        request(post_extra, (err, res) => {
-            if (err) {
-                console.log("error " + err)
-                // NEED TO ADD SMTHG heRE TO HANDLE WHEN UNDEFINED
-            } else {
-
-                var sites_array_b = JSON.parse(response.body)
-                var sites_array = sites_array_b.sites
-                console.log("PAGE 2 sites_array")
-                console.log(sites_array)
-                callback(JSON.stringify(sites_array))
-                //        const response_a = JSON.parse(response.body)
-                //        if (response_a.res_message != "OK") {
-                //       fs.writeFileSync('public/export_sites.json', response.body)
-                //        } else {
-                //           const sites_array_a = JSON.parse(response.body)
-                //           const sites_array = sites_array_a.sites
-                //           console.log("export ARRAY EXTRA")
-                //           console.log(sites_array)
-                //           callback(undefined, JSON.stringify(sites_array))
-                //       }
-                //   return(JSON.stringify([hoplala]))
-            }
-        })
-    }
-
-*/
-/*
-                // TO CREATE THE LOOP IF MORE THAN 100 SITES
-
-                /*
-                if (sites_array.length == 5) {
-                    var number_sites = 5;
-                    var page_count = 1;
-                    while (number_sites == 5) {
-                        console.log("I GOT IN THE WHILE")
-                         json_extra = requestExtra(page_count)
-                         console.log("json_extra")
-                         console.log(JSON.parse(json_extra))
-
-                    //    json_extra_object_2 = JSON.parse(json_extra)
-                    //    const sites_array = sites_array.concat(json_extra_object_2.sites)
-                        console.log("this should have 6 sites")
-                    //    console.log(sites_array)
-
-                    //    number_sites = json_extra_object_2.length()
-                   //     page_count = page_count + 1
-                   number_sites = 1
-                    }
-                }
-                */
-
-/*
-fs.writeFileSync('public/export_sites.json', JSON.stringify(sites_array))
-}
-}
-})
-*/

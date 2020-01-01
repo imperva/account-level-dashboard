@@ -4,17 +4,41 @@ const querystring = require('querystring');
 
 // site_list = site_id_input;
 
-
-
-const bulk_changes = ({ api_id, api_key, account_id, period } = {}, callback) => {
-    
-for(let i = 0; i < site_list.length; i++){
-
-   console.log(site_list[i]);
-
+const_response = {
+    res_message: "",
+    status: "success"
 }
 
+/*
+const post_data = {
+    api_id: api_id,
+    api_key: api_key,
+    account_id: "account_id",
+    page_site: 100
 }
+
+
+function bulk_changes  ({ api_id, api_key, site_id_input, rule_id, rule_id_2 }) {
+    for(let i = 0; i<site_id_input.length; i++) {
+    const site_id = site_id_input[i];
+    if (rule_id == "api.threats.bot_access_control") {
+        if (rule_id_2 == 'block_bad_bots') {
+const post_action = {
+        'account_id' : account_id,
+        'api_id' : api_id,
+        'api_key' : api_key,
+        'site_id' : site_value,
+        'rule_id' : rule_id,
+        'block_bad_bots' : block_bad_bots	
+}
+        } else if (rule_id_2 == 'challenge_suspected_bots'){
+
+        }
+    }
+}
+}
+
+
 
 //const bulk_changes_acl = ({ api_id, api_key, account_id, period } = {}, callback) => {
 //}
@@ -107,10 +131,10 @@ module.exports = {
     version_check
 }
 
-*//*
+
 module.exports = {
-    bulk_changes,
-    bulk_changes_acl
+    bulk_changes
+    //  bulk_changes_acl
 }
 
 */

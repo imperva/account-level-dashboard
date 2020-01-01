@@ -1,8 +1,8 @@
 const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
-let dashboard_scripts = require('./dashboard_scripts.js')
-let bulk_scripts = require('./bulk_changes.js')
+const dashboard_scripts = require('./dashboard_scripts.js')
+const bulk_scripts = require('./bulk_changes.js')
 const fs = require('fs')
 const request = require('request')
 const app = express()
@@ -72,6 +72,9 @@ app.post('/dashboard_scripts', (req, res) => {
         }
         res.send(response)
     })
+})
+app.get('/dashboard_scripts', (req, res) => {
+    res.send({res_message: "NOK Get on /dashboard_scripts"})
 })
 
 app.get('/bulk_scripts', (req, res) => {

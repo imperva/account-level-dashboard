@@ -26,8 +26,8 @@ After the first time installation, you only need to run the following command fr
 it is recommended to login with the API keys of the account admin to benefit from all the account information
 
 ## legacy PHP version
-The previous PHP version is still available from the PHP subfolder.  
-It can be deployed with the Dockerfile or directly on a web server.
+The previous PHP version is still available and can be downloaded from the php branch.   
+It can be deployed with the Dockerfile or directly on a web server. Follow the readme guide there.
 
 # Screenshots
   

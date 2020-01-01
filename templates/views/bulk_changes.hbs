@@ -16,8 +16,8 @@
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
         integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-   
-        <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="css/style.css" rel="stylesheet" type="text/css">
     <link href="css/lib/sweetalert/sweetalert.css" rel="stylesheet" type="text/css">
     <!-- Custom CSS -->
@@ -279,12 +279,12 @@
 <!-- JS LIBRARIES -->
 <script src="js/jquery/jquery.min.js"></script>
 <!-- Bootstrap tether Core JavaScript -->
-<script src="js/bootstrap/bootstrap.min.js"></script>
 <script type='text/javascript' src='js/datatables/datatables.min.js'></script>
 <script type='text/javascript' src='https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js'></script>
 <script type='text/javascript' src='https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js'></script>
 
 <script src="js/calendar-2/moment.latest.min.js"></script>
+<script src="js/bootstrap/bootstrap.min.js"></script>
 <script src="js/scripts.js"></script>
 <script src="js/sweetalert/sweetalert.min.js"></script>
 <script src="js/toastr/toastr.min.js"></script>
@@ -407,12 +407,12 @@
                 post_data.site_id_input = selected_sites;
                 console.log(post_data);
                 $.ajax({
-                    url: "php/bulk_changes_script.php",
+                    url: "http://localhost:3000/bulk_scripts",
                     type: "post",
                     dataType: 'json',
                     data: post_data,
                     success: function (data) {
-                        console.log("PHP SUCCESS");
+                        console.log("BULK NODEJS SUCCESS");
                         fill_settings_table();
                         clicked_obj.disabled = false;
                         clicked_obj.innerHTML = clicked_obj.name;
@@ -425,8 +425,8 @@
                     error: function (jqXHR, textStatus, errorThrown) {
                         fill_settings_table();
                         console.log(jqXHR, textStatus, errorThrown);
-                        console.log("PHP ERROR");
-                        toastr.warning('warning: php script returned an error, reach out in Github if it didn\'t work');
+                        console.log("NODEJS ERROR");
+                        toastr.warning('warning: nodejs script returned an error, reach out in Github if it didn\'t work');
                         clicked_obj.disabled = false;
                         clicked_obj.innerHTML = clicked_obj.name;
                     }
@@ -525,11 +525,11 @@
             send_command(post_values, this);
         });
         $('#run_bad_bots').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.bot_access_control", "block_bad_bots": "true" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.bot_access_control", "rule_id_2": "block_bad_bots", "value": "true" };
             send_command(post_values, this);
         });
         $('#run_suspected_bots').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.bot_access_control", "challenge_suspected_bots": "false" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.bot_access_control", "rule_id_2": "challenge_suspected_bots", "value": "false" };
             send_command(post_values, this);
         });
         $('#run_ip_blacklist').click(function () {

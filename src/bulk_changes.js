@@ -2,139 +2,98 @@ const fs = require('fs')
 const axios = require('axios')
 const querystring = require('querystring');
 
-// site_list = site_id_input;
-
 const_response = {
     res_message: "",
     status: "success"
 }
 
-/*
-const post_data = {
-    api_id: api_id,
-    api_key: api_key,
-    account_id: "account_id",
-    page_site: 100
-}
 
+//const bulk_changes = ({ api_id, api_key, account_id, site_id_input, rule_id, rule_id_2, rule_id_2_value }, callback) => {
+const bulk_changes = ({ api_id, api_key, account_id, site_id_input, rule_id, rule_id_2, rule_id_2_value }, callback) => {
 
-function bulk_changes  ({ api_id, api_key, site_id_input, rule_id, rule_id_2 }) {
-    for(let i = 0; i<site_id_input.length; i++) {
-    const site_id = site_id_input[i];
+    let post_security = {
+        "api_id": api_id,
+        "api_key": api_key,
+        "account_id": account_id,
+        "site_id": site_id_input[0],
+        "rule_id": rule_id
+    }
+
+    let param = {}
+    const res_message = "OK"
+
     if (rule_id == "api.threats.bot_access_control") {
         if (rule_id_2 == 'block_bad_bots') {
-const post_action = {
-        'account_id' : account_id,
-        'api_id' : api_id,
-        'api_key' : api_key,
-        'site_id' : site_value,
-        'rule_id' : rule_id,
-        'block_bad_bots' : block_bad_bots	
-}
-        } else if (rule_id_2 == 'challenge_suspected_bots'){
-
+            param = { "block_bad_bots": rule_id_2_value }
+        } else if (rule_id_2 == "challenge_suspected_bots") {
+            param = { "challenge_suspected_bots": rule_id_2_value }
         }
     }
-}
-}
-
-
-
-//const bulk_changes_acl = ({ api_id, api_key, account_id, period } = {}, callback) => {
-//}
-/*
-const post_data = {
-    api_id: api_id,
-    api_key: api_key,
-    account_id: account_id
-    //       'page_size': 100
-}
-
-
-/*
-const sites_list = ({ api_id, api_key, account_id, period } = {}, callback) => {
-    console.log("received JSON")
-    console.log({ api_id, api_key, account_id, period })
-
-
-    const post_data = {
-        api_id: api_id,
-        api_key: api_key,
-        account_id: account_id
-        //       'page_size': 100
+    else if (rule_id = "") {
+        res_message = "NOK"
+        // RETURN THIS ERROR MESSAGE
+    }
+    else {
+        param = { "security_rule_action": rule_id_2_value }
     }
 
-    const post_stats = {
-        api_id: api_id,
-        api_key: api_key,
-        account_id: account_id,
-        stats: 'visits_timeseries, hits_timeseries, bandwidth_timeseries, requests_geo_dist_summary, visits_dist_summary, caching, caching, caching_timeseries, threats, incap_rules, incap_rules_timeseries',
-        time_range: period
-    }
-
-
-    // SITE LIST JSON
-
-
-
-    // PROMISE FOR ALL CALLS
-    axios.all([
-        axios.post('https://my.imperva.com/api/prov/v1/accounts/listSubAccounts', querystring.stringify(post_data)),
-        axios.post('https://my.imperva.com/api/stats/v1', querystring.stringify(post_stats)),
-        axios.post('https://my.imperva.com/api/prov/v1/accounts/subscription', querystring.stringify(post_data)),
-        axios.post('https://my.imperva.com/api/prov/v1/sites/list', querystring.stringify(post_data))
-    ])
-
-        .then(axios.spread((r_subaccounts, r_stats, r_sub, r_sites) => {
-
-            console.log("POST SUBACCOUNT OK")
-            //console.log(r_sub.data)
-            fs.writeFileSync('public/export_subaccounts.json', JSON.stringify(r_subaccounts.data))
-
-            console.log("POST STATS OK")
-            //console.log(r_stats.data)
-            fs.writeFileSync('public/export_account_stats.json', JSON.stringify(r_stats.data))
-
-            console.log("POST SUBSCRIPTION OK")
-            //console.log(r_sub.data)
-            fs.writeFileSync('public/export_account_subscriptions.json', JSON.stringify(r_sub.data))
-
-            console.log("POST LIST SITES")
-            if (r_sites.data.res_message != "OK") {
-                callback({ res_message: "NOK", title: "Error", message: "Make sure you are using Admin Keys\n Test on API explorer: /api/prov/v1/sites/list\n error code: " + r_sites.data.res_message })
-                //ADD ERROR IN CASE OF API AUTH ERROR
-                //                    text: ("Make sure you are using Admin Keys\n Test on API explorer: /api/prov/v1/sites/list\n error code: " + data.res_message),
-
+    post_security = { ...post_security, ...param }
+    console.log("POST SECURITY   ")
+    console.log(post_security)
+    console.log("SITE INPUT " + site_id_input)
+    axios.post('https://my.incapsula.com/api/prov/v1/sites/configure/security', querystring.stringify(post_security))
+        .then(function (response) {
+            console.log(response.data.domain)
+            if (site_id_input.length > 1) {
+                site_id_input.shift()
+                bulk_changes({ "api_id": api_id, "api_key": api_key, "account_id": account_id, "site_id_input": site_id_input, "rule_id": post_security.rule_id, "rule_id_2": rule_id_2, "rule_id_2_value": rule_id_2_value }, callback)
             } else {
-                console.log(r_sites.data)
-                var sites_array = r_sites.data.sites
-                console.log("export ARRAY")
-                console.log(sites_array)
-                console.log(sites_array.length)
-                callback({ res_message: "OK" })
-                fs.writeFileSync('public/export_sites.json', JSON.stringify(sites_array))
-
+                callback({ res_message: "OK", message: "c bon" })
             }
-        }))
-        .catch((err) => {
-            console.log('FAIL', err)
-            callback({ res_message: "NOK", title: "error when running the API", message: "Connectivity error or NodeJS parser error.\n Try the command: node --http-parser=legacy src/app.js " })
         })
-
+        .catch(error => {
+            console.log("ERROR")
+            console.log(error)
+        })
 }
-
-const version_check = ({ api_id, api_key, account_id, period } = {}, callback) => {
-}
-
-module.exports = {
-    sites_list,
-    version_check
-}
-
 
 module.exports = {
     bulk_changes
     //  bulk_changes_acl
+}
+
+                /* axios.post('https://localhost:3000/dashboard_scripts', querystring.stringify(post_fetch_all), callback)
+                .then( function(res){
+                    console.log("success dashboard script")
+                    console.log(res)
+                    callback({ res_message: "OK", message: "c bon" })
+                }) 
+                .catch(err => {
+                    console.log("error in dashboard scrip")
+                    callback({ res_message: "NOT OK", message:err.response })
+                    console.log(err.response)
+                })*/
+
+
+
+/*
+
+//const bulk_changes_acl = ({ api_id, api_key, account_id, period } = {}, callback) => {
+//}
+
+
+    .then(axios.spread((r_subaccounts, r_stats, r_sub, r_sites) => {
+
+        console.log("POST SUBACCOUNT OK")
+        //console.log(r_sub.data)
+        fs.writeFileSync('public/export_subaccounts.json', JSON.stringify(r_subaccounts.data))
+
+    }))
+    .catch((err) => {
+        console.log('FAIL', err)
+        callback({ res_message: "NOK", title: "error when running the API", message: "Connectivity error or NodeJS parser error.\n Try the command: node --http-parser=legacy src/app.js " })
+    })
+
 }
 
 */

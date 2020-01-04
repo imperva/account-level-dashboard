@@ -19,11 +19,12 @@
 
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="css/style.css" rel="stylesheet" type="text/css">
-    <link href="css/lib/sweetalert/sweetalert.css" rel="stylesheet" type="text/css">
     <!-- Custom CSS -->
     <link href="css/toastr/toastr.min.css" rel="stylesheet" type="text/css">
     <!--   <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css"> -->
     <link href="https://cdn.datatables.net/select/1.3.0/css/select.dataTables.min.css" rel="stylesheet" type="text/css">
+    <link href="css/sweetalert/sweetalert.css" rel="stylesheet" type="text/css">
+
 
     <style>
         th {
@@ -263,16 +264,14 @@
 
         </div>
 
-    </div>
 
     <!-- END ROW of Inputs form -->
 
 
 
-    </div> <!-- end page wrapper-->
 
     {{>footer}}
-
+</div>
 </body>
 
 
@@ -405,6 +404,7 @@
                 clicked_obj.disabled = true;
                 clicked_obj.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing Changes';
                 post_data.site_id_input = selected_sites;
+                console.log("POST DATA")
                 console.log(post_data);
                 $.ajax({
                     url: "http://localhost:3000/bulk_scripts",
@@ -413,13 +413,49 @@
                     data: post_data,
                     success: function (data) {
                         console.log("BULK NODEJS SUCCESS");
+                        console.log(data)
                         fill_settings_table();
                         clicked_obj.disabled = false;
                         clicked_obj.innerHTML = clicked_obj.name;
-                        if (data.res_message == "OK") {
+                        if (data.error.res_message == "OK") {
                             toastr.success('Success');
+
+                            // reload the page data
+
+const post_data = {
+    "account_id": sessionStorage.getItem("var_account_id"),
+    "api_id": sessionStorage.getItem("var_api_id"), 
+    "api_key": sessionStorage.getItem("var_api_key"),
+    period: "last_7_days"
+}
+
+                            $.ajax({
+        url: "http://localhost:3000/dashboard_scripts",
+        type: "post",
+        dataType: 'json',
+        data: post_data,
+        success: function (data) {
+            console.log("RELOAD DATA");
+            console.log(data);
+            if (data.error.res_message != "OK") {
+                swal({
+                    title: data.error.title,
+                    text: data.error.message,
+                    type: "error"
+                });
+            } else {
+                window.location.href = "bulk_changes";
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("POST REQUEST FAILED");
+            console.log(jqXHR, textStatus, errorThrown);
+            window.location.href = "bulk_changes";
+        }
+    });
+
                         } else {
-                            toastr.error("<p style=\"color:white\">error code: </p>" + data.res_message, 'please login with Accound Admin API keys', 'Permissions Error');
+                            toastr.error("<p style=\"color:white\">error code: </p>" + JSON.parse(data).error.message, 'please login with Account admin API keys', 'Permissions Error');
                         }
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
@@ -483,53 +519,53 @@
             check_keys_ok();
         });
         $('#fetch_settings').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "", "security_rule_action": "" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "security_rule_action", "rule_id_2": "", "rule_id_2_value": "" };
             send_command(post_values, this);
         });
         $('#run_backdoor').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.backdoor", "security_rule_action": "api.threats.action.quarantine_url" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.backdoor", "rule_id_2": "", "rule_id_2_value": "api.threats.action.quarantine_url" };
             send_command(post_values, this);
         });
         $('#run_rfi').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.remote_file_inclusion", "security_rule_action": "api.threats.action.block_request" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.remote_file_inclusion",  "rule_id_2": "", "rule_id_2_value": "api.threats.action.block_request" };
             send_command(post_values, this);
         });
         $('#run_rfi_alert').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.remote_file_inclusion", "security_rule_action": "api.threats.action.alert" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.remote_file_inclusion", "rule_id_2": "", "rule_id_2_value": "api.threats.action.alert" };
             send_command(post_values, this);
         });
         $('#run_sqli').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.sql_injection", "security_rule_action": "api.threats.action.block_request" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.sql_injection", "rule_id_2": "", "rule_id_2_value": "api.threats.action.block_request" };
             send_command(post_values, this);
         });
         $('#run_sqli_alert').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.sql_injection", "security_rule_action": "api.threats.action.alert" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.sql_injection",  "rule_id_2": "", "rule_id_2_value": "api.threats.action.alert" };
             send_command(post_values, this);
         });
         $('#run_xss').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.cross_site_scripting", "security_rule_action": "api.threats.action.block_request" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.cross_site_scripting", "rule_id_2": "", "rule_id_2_value": "api.threats.action.block_request" };
             button_clicked = this;
             send_command(post_values, this);
         });
         $('#run_xss_alert').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.cross_site_scripting", "security_rule_action": "api.threats.action.alert" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id":"api.threats.cross_site_scripting", "rule_id_2":" ", "rule_id_2_value":"api.threats.action.alert"};
             button_clicked = this;
             send_command(post_values, this);
         });
         $('#run_ira').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.illegal_resource_access", "security_rule_action": "api.threats.action.block_request" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.illegal_resource_access",  "rule_id_2": "", "rule_id_2_value": "api.threats.action.block_request" };
             send_command(post_values, this);
         });
         $('#run_ira_alert').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.illegal_resource_access", "security_rule_action": "api.threats.action.alert" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.illegal_resource_access", "rule_id_2": "", "rule_id_2_value": "api.threats.action.alert" };
             send_command(post_values, this);
         });
         $('#run_bad_bots').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.bot_access_control", "rule_id_2": "block_bad_bots", "value": "true" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.bot_access_control", "rule_id_2": "block_bad_bots", "rule_id_2_value": "true" };
             send_command(post_values, this);
         });
         $('#run_suspected_bots').click(function () {
-            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.bot_access_control", "rule_id_2": "challenge_suspected_bots", "value": "false" };
+            var post_values = { "account_id": sessionStorage.getItem("var_account_id"), "api_id": sessionStorage.getItem("var_api_id"), "api_key": sessionStorage.getItem("var_api_key"), "rule_id": "api.threats.bot_access_control", "rule_id_2": "challenge_suspected_bots", "rule_id_2_value": "false" };
             send_command(post_values, this);
         });
         $('#run_ip_blacklist').click(function () {

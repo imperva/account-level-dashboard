@@ -31,10 +31,6 @@ const sites_list = ({ api_id, api_key, account_id, period } = {}, callback) => {
     }
 
 
-    // SITE LIST JSON
-
-
-
     // PROMISE FOR ALL CALLS
     axios.all([
         axios.post('https://my.imperva.com/api/prov/v1/accounts/listSubAccounts', querystring.stringify(post_data)),

@@ -2,7 +2,7 @@ const path = require('path')
 const express = require('express')
 const hbs = require('hbs')
 const dashboard_scripts = require('./dashboard_scripts.js')
-const bulk_scripts = require('./bulk_changes.js')
+const bulk_changes = require('./bulk_changes.js')
 const fs = require('fs')
 const request = require('request')
 const app = express()
@@ -77,8 +77,8 @@ app.get('/dashboard_scripts', (req, res) => {
     res.send({res_message: "NOK Get on /dashboard_scripts"})
 })
 
-app.get('/bulk_scripts', (req, res) => {
-    bulk_scripts.bulk_changes(req.body, (error, response) => {
+app.post('/bulk_scripts', (req, res) => {
+    bulk_changes.bulk_changes(req.body, (error, response) => {
         if (error) {
             return res.send({ error })
         }
@@ -86,7 +86,7 @@ app.get('/bulk_scripts', (req, res) => {
     })
 })
 
-app.get('/bulk_scripts_acl', (req, res) => {
+app.post('/bulk_scripts_acl', (req, res) => {
     bulk_scripts.bulk_changes_acl(req.body, (error, response) => {
         if (error) {
             return res.send({ error })

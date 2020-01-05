@@ -73,6 +73,15 @@ app.post('/dashboard_scripts', (req, res) => {
         res.send(response)
     })
 })
+app.post('/sites_fetch', (req, res) => {
+    dashboard_scripts.sites_fetch(req.body, (error, response) => {
+        if (error) {
+            return res.send({ error })
+        }
+        res.send(response)
+    })
+})
+
 app.get('/dashboard_scripts', (req, res) => {
     res.send({res_message: "NOK Get on /dashboard_scripts"})
 })

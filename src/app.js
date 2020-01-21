@@ -96,7 +96,7 @@ app.post('/bulk_scripts', (req, res) => {
 })
 
 app.post('/bulk_scripts_acl', (req, res) => {
-    bulk_scripts.bulk_changes_acl(req.body, (error, response) => {
+    bulk_changes.bulk_changes_acl(req.body, (error, response) => {
         if (error) {
             return res.send({ error })
         }

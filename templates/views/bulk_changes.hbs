@@ -481,12 +481,12 @@
                 post_data.site_id_input = selected_sites;
                 console.log(post_data);
                 $.ajax({
-                    url: "php/bulk_changes_acl.php",
+                    url: "/bulk_scripts_acl",
                     type: "post",
                     dataType: 'json',
                     data: post_data,
                     success: function (data2) {
-                        console.log("PHP SUCCESS ACL");
+                        console.log("SUCCESS ACL API");
                         console.log(data2);
                         fill_settings_table();
                         clicked_obj.disabled = false;

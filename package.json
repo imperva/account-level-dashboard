@@ -4,7 +4,7 @@
   "description": "Dashboard relying on Incapsula APIs to view settings of all sites of an account in a clear and actionable dashboard.  \r Instant view of settings of all sites and account level statistics",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "snyk test"
   },
   "repository": {
     "type": "git",
@@ -25,5 +25,8 @@
     "path": "^0.12.7",
     "querystring": "^0.2.0",
     "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "snyk": "^1.284.0"
   }
 }

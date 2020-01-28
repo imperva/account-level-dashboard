@@ -79,10 +79,10 @@ const bulk_changes_acl = ({ api_id, api_key, account_id, site_id_input, rule_id,
                 const acl_rules_1 = response.data.security.acls
                 // LOOP to check if there are existing IPs in black/whitelist
                 for (let i = 0; i < acl_rules_1.length; i++) {
-                    if (response.data.security.acls[i].id == "api.acl.whitelisted_ips") {
-                        old_ips_whitelist = response.data.security.acls[i].ips
-                    } else if (response.data.security.acls[i].id == "api.acl.blacklisted_ips") {
-                        old_ips_blacklist = response.data.security.acls[i].ips
+                    if (response.data.security.acls.rules[i].id == "api.acl.whitelisted_ips") {
+                        old_ips_whitelist = response.data.security.acls.rules[i].ips
+                    } else if (response.data.security.acls.rules[i].id == "api.acl.blacklisted_ips") {
+                        old_ips_blacklist = response.data.security.acls.rules[i].ips
                     }
                 }
 

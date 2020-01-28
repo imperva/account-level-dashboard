@@ -234,7 +234,7 @@
                     </div>
                     A comma separated list of IPs or IP ranges, e.g: 192.168.1.1, 192.168.1.1-192.168.1.100,
                     192.168.1.1/24 </br>
-                    <span style="color: red"> the IPs below will be added to the existing configured blocked
+                    <span style="color: red"> the IPs below will REPLACE the existing configured blocked
                         IPs</span>
                     <br>
                     <input type="text" id="ip_blacklist" name="ip_blacklist"
@@ -250,7 +250,7 @@
                     </div>
                     A comma separated list of IPs or IP ranges, e.g: 192.168.1.1, 192.168.1.1-192.168.1.100,
                     192.168.1.1/24 </br>
-                    <span style="color: red"> the IPs below will be added to the existing configured whitelisted
+                    <span style="color: red"> the IPs below will REPLACE the existing configured whitelisted
                         IPs</span>
                     <br>
                     <input type="text" id="ip_whitelist" name="ip_whitelist"
@@ -291,7 +291,7 @@
 
 
 <script>
-    toastr.warning('Bulk changes is not yet implemented in this new version, stay tuned in Github', 'Warning');
+  //  toastr.warning('Bulk changes is not yet implemented in this new version, stay tuned in Github', 'Warning');
 
     function fill_settings_table() {
         var list_sites = [];

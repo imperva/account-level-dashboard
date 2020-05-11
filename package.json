@@ -24,7 +24,7 @@
     "hbs": "^4.0.6",
     "path": "^0.12.7",
     "querystring": "^0.2.0",
-    "request": "^2.88.0"
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "snyk": "^1.284.0"

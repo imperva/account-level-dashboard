@@ -21,7 +21,7 @@
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
-    "hbs": "^4.0.6",
+    "hbs": "^4.1.1",
     "path": "^0.12.7",
     "querystring": "^0.2.0",
     "request": "^2.88.0"
